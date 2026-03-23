@@ -20,7 +20,7 @@ st.markdown("---")
 
 # إنشاء قاموس يربط اسم المنطقة بالرقم الخاص بها
 locations_map = {
-    # 1. High-End (Most Expensive)
+    # 1. High-End
     "عبدون (Abdoun)": 1.0, 
     "دابوق (Dabouq)": 1.0, 
     "دير غبار (Deir Ghbar)": 1.0, 
@@ -46,17 +46,17 @@ locations_map = {
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    # نعرض للمستخدم قائمة بالأسماء فقط (مفاتيح القاموس)
     selected_area_name = st.selectbox("اختر المنطقة", list(locations_map.keys()))
-    # نستخرج الرقم السري المقابل للمنطقة التي اختارها المستخدم
     region_number = locations_map[selected_area_name]
     
 with col2:
-    area = st.number_input("مساحة البناء (م²)", value=150.0, min_value=50.0)
+    # أضفنا step=1.0 لزيادة المساحة بمقدار 1
+    area = st.number_input("مساحة البناء (م²)", value=150.0, min_value=50.0, step=1.0)
+    
 with col3:
-    age = st.number_input("عمر البناء (سنوات)", value=5.0, min_value=0.0)
+    # أضفنا step=1.0 لزيادة العمر بمقدار 1
+    age = st.number_input("عمر البناء (سنوات)", value=5.0, min_value=0.0, step=1.0)
 
 if st.button("احسب السعر المتوقع 🔍"):
-    # نمرر للنموذج الرقم (region_number) بدلاً من الاسم النصي
     prediction = model.predict(np.array([[region_number, area, age]]))
     st.success(f"السعر التقريبي المتوقع في {selected_area_name.split(' ')[0]}: {prediction[0][0]:,.2f} ألف دينار")
