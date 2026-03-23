@@ -50,13 +50,17 @@ with col1:
     region_number = locations_map[selected_area_name]
     
 with col2:
-    # أضفنا step=1.0 لزيادة المساحة بمقدار 1
-    area = st.number_input("مساحة البناء (م²)", value=150.0, min_value=50.0, step=1.0)
+    # حولنا القيم إلى أرقام صحيحة (Integer) بإزالة الفواصل
+    area = st.number_input("مساحة البناء (م²)", value=150, min_value=50, step=1)
     
 with col3:
-    # أضفنا step=1.0 لزيادة العمر بمقدار 1
-    age = st.number_input("عمر البناء (سنوات)", value=5.0, min_value=0.0, step=1.0)
+    # حولنا القيم إلى أرقام صحيحة (Integer) بإزالة الفواصل
+    age = st.number_input("عمر البناء (سنوات)", value=5, min_value=0, step=1)
 
 if st.button("احسب السعر المتوقع 🔍"):
-    prediction = model.predict(np.array([[region_number, area, age]]))
+    # نقوم بتحويل المدخلات إلى Float فقط داخل النموذج ليتمكن من حسابها بدقة
+    input_data = np.array([[region_number, float(area), float(age)]])
+    prediction = model.predict(input_data)
+    
+    # عرض السعر النهائي كـ Float مع منزلتين عشريتين
     st.success(f"السعر التقريبي المتوقع في {selected_area_name.split(' ')[0]}: {prediction[0][0]:,.2f} ألف دينار")
