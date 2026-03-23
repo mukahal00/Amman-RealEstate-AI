@@ -18,14 +18,45 @@ except Exception as e:
 st.title("توقع أسعار البناء في عمّان 🇯🇴🏠")
 st.markdown("---")
 
+# إنشاء قاموس يربط اسم المنطقة بالرقم الخاص بها
+locations_map = {
+    # 1. High-End (Most Expensive)
+    "عبدون (Abdoun)": 1.0, 
+    "دابوق (Dabouq)": 1.0, 
+    "دير غبار (Deir Ghbar)": 1.0, 
+    "أم أذينة (Um Uthaina)": 1.0, 
+    "الصويفية (Sweifieh)": 1.0,
+    
+    # 2. Mid-Range
+    "خلدا (Khalda)": 2.0, 
+    "تلاع العلي (Tlaa Al Ali)": 2.0, 
+    "الشميساني (Shmeisani)": 2.0, 
+    "الجبيهة (Jubeiha)": 2.0, 
+    "الرابية (Rabieh)": 2.0,
+    
+    # 3. Affordable
+    "طبربور (Tabarbour)": 3.0, 
+    "ماركا (Marka)": 3.0, 
+    "الهاشمي (Al-Hashimi)": 3.0, 
+    "أبو نصير (Abu Nuseir)": 3.0, 
+    "النزهة (Al-Nuzha)": 3.0
+}
+
+# ترتيب الحقول في الشاشة
 col1, col2, col3 = st.columns(3)
+
 with col1:
-    region = st.selectbox("تصنيف المنطقة", [1.0, 2.0, 3.0])
+    # نعرض للمستخدم قائمة بالأسماء فقط (مفاتيح القاموس)
+    selected_area_name = st.selectbox("اختر المنطقة", list(locations_map.keys()))
+    # نستخرج الرقم السري المقابل للمنطقة التي اختارها المستخدم
+    region_number = locations_map[selected_area_name]
+    
 with col2:
-    area = st.number_input("مساحة البناء (م²)", value=150.0)
+    area = st.number_input("مساحة البناء (م²)", value=150.0, min_value=50.0)
 with col3:
-    age = st.number_input("عمر البناء (سنوات)", value=5.0)
+    age = st.number_input("عمر البناء (سنوات)", value=5.0, min_value=0.0)
 
 if st.button("احسب السعر المتوقع 🔍"):
-    prediction = model.predict(np.array([[region, area, age]]))
-    st.success(f"السعر التقريبي المتوقع: {prediction[0][0]:,.2f} ألف دينار")
+    # نمرر للنموذج الرقم (region_number) بدلاً من الاسم النصي
+    prediction = model.predict(np.array([[region_number, area, age]]))
+    st.success(f"السعر التقريبي المتوقع في {selected_area_name.split(' ')[0]}: {prediction[0][0]:,.2f} ألف دينار")
